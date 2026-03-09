@@ -32,7 +32,7 @@
         <% contact = Contact.find_by({ "id" => activity["contact_id"] }) %>
         <% salesperson = User.find_by({ "id" => activity["user_id"] }) %>
         <p>
-          <b><%= activity["activity_type"].capitalize %> between <%= contact ? "#{contact["first_name"]} #{contact["last_name"]}" : "—" %> and <%= salesperson ? "#{salesperson["first_name"]} #{salesperson["last_name"]}" : "—" %> on <%= activity["date"].strftime("%A, %B %-d") %>:</b><br>
+          <b><%= activity["activity_type"].capitalize %> between <%= contact ? link_to("#{contact["first_name"]} #{contact["last_name"]}", "/contacts/#{contact["id"]}") : "—" %> and <%= salesperson ? link_to("#{salesperson["first_name"]} #{salesperson["last_name"]}", "/users/#{salesperson["id"]}") : "—" %> on <%= activity["date"].strftime("%A, %B %-d") %>:</b><br>
           <%= activity["note"] %>
         </p>
       <% end %>
