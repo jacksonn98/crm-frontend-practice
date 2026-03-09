@@ -1,76 +1,86 @@
-<h1><%= @company["name"] %></h1>
+<h1><%= @company["name"] %> <span style="font-weight: normal;"><i>(<%= @company["city"] %>, <%= @company["state"] %>)</i></span></h1>
 
-<h2><%= @company["city"] %>, <%= @company["state"] %></h2>
+<div class="mt-4">
+<div class="row">
+  <div class="col-md-4">
+    <h3>Contacts</h3>
 
-<h3>Contacts</h3>
+    <ul class="list-unstyled">
+      <% for contact in @contacts %>
+        <li class="d-flex align-items-center gap-2 mb-2">
+          <i class="bi bi-person-vcard" style="font-size: 3.5rem;"></i>
+          <div>
+            <a href="/contacts/<%= contact["id"] %>">
+              <%= contact["first_name"] %> <%= contact["last_name"] %>
+            </a><br>
+            <%= contact["email"] %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
 
-<ul>
-  <% for contact in @contacts %>
-    <li>
-      <a href="/contacts/<%= contact["id"] %>">
-        <%= contact["last_name"] %>, <%= contact["first_name"] %>
-      </a>
-    </li>
-  <% end %>
-</ul>
-
-<p>
-  <a href="/contacts/new?company_id=<%= @company["id"] %>">New Contact</a>
-</p>
-
-<h3>Sales Activity</h3>
-
-<% if @activities.any? %>
-  <% for activity in @activities %>
-    <% contact = Contact.find_by({ "id" => activity["contact_id"] }) %>
-    <% salesperson = User.find_by({ "id" => activity["user_id"] }) %>
     <p>
-      <b><%= activity["activity_type"].capitalize %> between <%= contact ? "#{contact["first_name"]} #{contact["last_name"]}" : "—" %> and <%= salesperson ? "#{salesperson["first_name"]} #{salesperson["last_name"]}" : "—" %> on <%= activity["date"].strftime("%A, %B %-d") %>:</b><br>
-      <%= activity["note"] %>
+      <a href="/contacts/new?company_id=<%= @company["id"] %>">New Contact</a>
     </p>
-  <% end %>
-<% else %>
-  <p>No activities logged yet.</p>
-<% end %>
+  </div>
 
-<% if @current_user != nil %>
-  <h3>Log a new sales activity</h3>
+  <div class="col-md-8">
+    <h3>Sales Activity</h3>
 
-  <form action="/activities" method="post">
-    <input type="hidden" name="company_id" value="<%= @company["id"] %>">
+    <% if @activities.any? %>
+      <% for activity in @activities %>
+        <% contact = Contact.find_by({ "id" => activity["contact_id"] }) %>
+        <% salesperson = User.find_by({ "id" => activity["user_id"] }) %>
+        <p>
+          <b><%= activity["activity_type"].capitalize %> between <%= contact ? "#{contact["first_name"]} #{contact["last_name"]}" : "—" %> and <%= salesperson ? "#{salesperson["first_name"]} #{salesperson["last_name"]}" : "—" %> on <%= activity["date"].strftime("%A, %B %-d") %>:</b><br>
+          <%= activity["note"] %>
+        </p>
+      <% end %>
+    <% else %>
+      <p>No activities logged yet.</p>
+    <% end %>
 
-    <div>
-      <label for="activity_type">Type</label>
-      <select name="activity_type" id="activity_type">
-        <option value="call">Call</option>
-        <option value="email">Email</option>
-        <option value="meeting">Meeting</option>
-      </select>
-    </div>
+    <% if @current_user != nil %>
+      <h3>Log a new sales activity</h3>
 
-    <div>
-      <label for="date">Date</label>
-      <input type="date" name="date" id="date">
-    </div>
+      <form action="/activities" method="post">
+        <input type="hidden" name="company_id" value="<%= @company["id"] %>">
 
-    <div>
-      <label for="contact_id">Contact</label>
-      <select name="contact_id" id="contact_id">
-        <option value="">-- Select a contact --</option>
-        <% for contact in @contacts %>
-          <option value="<%= contact["id"] %>"><%= contact["first_name"] %> <%= contact["last_name"] %></option>
-        <% end %>
-      </select>
-    </div>
+        
+        <div class="mb-3">
+          <label for="contact_id" class="form-label">With</label>
+          <select name="contact_id" id="contact_id" class="form-select">
+            <option value="">-- Select a contact --</option>
+            <% for contact in @contacts %>
+              <option value="<%= contact["id"] %>"><%= contact["first_name"] %> <%= contact["last_name"] %></option>
+            <% end %>
+          </select>
+        </div>
 
-    <div>
-      <label for="note">Note</label>
-      <textarea name="note" id="note"></textarea>
-    </div>
+        <div class="mb-3">
+          <label for="note" class="form-label">Note</label>
+          <textarea name="note" id="note" class="form-control"></textarea>
+        </div>
+<div class="mb-3">
+          <label for="activity_type" class="form-label">Type</label>
+          <select name="activity_type" id="activity_type" class="form-select">
+            <option value="call">Call</option>
+            <option value="email">Email</option>
+            <option value="meeting">Meeting</option>
+          </select>
+        </div>
 
-    <button type="submit">Log Activity</button>
-  </form>
-<% end %>
+        <div class="mb-3">
+          <label for="date" class="form-label">Date</label>
+          <input type="date" name="date" id="date" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Log Activity</button>
+      </form>
+    <% end %>
+  </div>
+</div>
+</div>
 
 <p><a href="/companies">Back to All Companies</a></p>
 
