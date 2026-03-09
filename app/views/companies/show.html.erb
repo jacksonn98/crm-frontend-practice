@@ -18,9 +18,63 @@
   <a href="/contacts/new?company_id=<%= @company["id"] %>">New Contact</a>
 </p>
 
+<h3>Sales Activity</h3>
+
+<% if @activities.any? %>
+  <% for activity in @activities %>
+    <% contact = Contact.find_by({ "id" => activity["contact_id"] }) %>
+    <% salesperson = User.find_by({ "id" => activity["user_id"] }) %>
+    <p>
+      <b><%= activity["activity_type"].capitalize %> between <%= contact ? "#{contact["first_name"]} #{contact["last_name"]}" : "—" %> and <%= salesperson ? "#{salesperson["first_name"]} #{salesperson["last_name"]}" : "—" %> on <%= activity["date"].strftime("%A, %B %-d") %>:</b><br>
+      <%= activity["note"] %>
+    </p>
+  <% end %>
+<% else %>
+  <p>No activities logged yet.</p>
+<% end %>
+
+<% if @current_user != nil %>
+  <h3>Log a new sales activity</h3>
+
+  <form action="/activities" method="post">
+    <input type="hidden" name="company_id" value="<%= @company["id"] %>">
+
+    <div>
+      <label for="activity_type">Type</label>
+      <select name="activity_type" id="activity_type">
+        <option value="call">Call</option>
+        <option value="email">Email</option>
+        <option value="meeting">Meeting</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="date">Date</label>
+      <input type="date" name="date" id="date">
+    </div>
+
+    <div>
+      <label for="contact_id">Contact</label>
+      <select name="contact_id" id="contact_id">
+        <option value="">-- Select a contact --</option>
+        <% for contact in @contacts %>
+          <option value="<%= contact["id"] %>"><%= contact["first_name"] %> <%= contact["last_name"] %></option>
+        <% end %>
+      </select>
+    </div>
+
+    <div>
+      <label for="note">Note</label>
+      <textarea name="note" id="note"></textarea>
+    </div>
+
+    <button type="submit">Log Activity</button>
+  </form>
+<% end %>
+
 <p><a href="/companies">Back to All Companies</a></p>
 
-<% User.find_by({ "id" => session["user_id"] }) != nil %>
+<% if @current_user != nil %>
   <p><a href="/companies/<%= @company["id"] %>/edit">Edit Company</a></p>
 
   <form action="/companies/<%= @company["id"] %>" method="post">

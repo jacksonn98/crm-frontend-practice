@@ -36,4 +36,4 @@ EOF
 # Install Ruby gems and prepare database
 bundle install
 rails db:setup
-rails runner scripts/create_data.rb
+rails runner scripts/create_data.rbra
